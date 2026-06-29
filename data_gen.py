@@ -81,8 +81,9 @@ for i in range(n):
     imp = max(imp, 100)  # Ensure a minimum number of impressions
     impressions[i] = imp
     
-    # Calculate CTR (with noise)
-    ctr = ctr_bases[ct] * np.random.uniform(0.7, 1.3)
+    # Calculate CTR (with noise) and weekend boost
+    weekend_ctr_mult = 1.2 if is_weekend[i] == 1 else 1.0
+    ctr = ctr_bases[ct] * weekend_ctr_mult * np.random.uniform(0.7, 1.3)
     ctr = max(0.001, min(ctr, 0.15))
     
     # Calculate Clicks
@@ -90,8 +91,9 @@ for i in range(n):
     clk = max(clk, 1)    # Ensure at least 1 click if there is spend
     clicks[i] = clk
     
-    # Calculate Conversion Rate (with noise)
-    cr = cr_bases[ct] * platform_cr_mult[p] * np.random.uniform(0.65, 1.35)
+    # Calculate Conversion Rate (with noise) and weekend boost
+    weekend_cr_mult = 1.3 if is_weekend[i] == 1 else 1.0
+    cr = cr_bases[ct] * platform_cr_mult[p] * weekend_cr_mult * np.random.uniform(0.65, 1.35)
     cr = max(0.005, min(cr, 0.25))
     
     # Calculate Orders
