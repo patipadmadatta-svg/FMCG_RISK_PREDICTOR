@@ -30,8 +30,25 @@ async def home():
 
 @app.post("/predict")
 async def predict(data: CampaignData):
-    ctr = round(data.clicks / data.impressions, 4)
-    cpc = round(data.spend / data.clicks, 2)
+    # Validation checks for impossible marketing scenarios
+    if data.spend < 0 or data.impressions < 0 or data.clicks < 0 or data.orders < 0:
+        return {"error": "Metrics cannot be negative numbers."}
+
+    if data.clicks > data.impressions:
+        return {"error": "Clicks cannot be greater than Impressions."}
+
+    if data.orders > data.clicks:
+        return {"error": "Orders cannot be greater than Clicks."}
+
+    if data.clicks == 0 and data.orders > 0:
+        return {"error": "Orders cannot be greater than 0 if Clicks is 0."}
+
+    if data.impressions == 0 and data.clicks > 0:
+        return {"error": "Clicks cannot be greater than 0 if Impressions is 0."}
+
+    # Safe calculations to prevent division by zero
+    ctr = round(data.clicks / data.impressions, 4) if data.impressions > 0 else 0.0
+    cpc = round(data.spend / data.clicks, 2) if data.clicks > 0 else 0.0
     is_weekend = 1 if data.day_of_week >= 5 else 0
 
     features = np.array([[data.platform, data.brand, data.campaign_type,

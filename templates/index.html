@@ -313,6 +313,18 @@
     function showResult(result, platformVal, brandVal, spend, impressions, clicks, orders) {
       const resultBox = document.getElementById("result");
       resultBox.style.display = "block";
+      
+      if (result.error) {
+        resultBox.className = "result risky";
+        document.getElementById("result-text").textContent = "INVALID INPUT ⚠️";
+        document.getElementById("result-confidence").textContent = result.error;
+        document.getElementById("result-badge").textContent = "Error";
+        
+        const breakdownItems = document.getElementById("breakdown-items");
+        breakdownItems.innerHTML = '<div class="breakdown-item warning"><div class="breakdown-dot"></div>Please enter logically valid metrics.</div>';
+        return;
+      }
+
       resultBox.className = "result " + (result.prediction === 1 ? "risky" : "safe");
       document.getElementById("result-text").textContent = result.label;
       document.getElementById("result-confidence").textContent = "Confidence: " + result.confidence + "%";
