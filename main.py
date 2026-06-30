@@ -34,6 +34,12 @@ async def predict(data: CampaignData):
     if data.spend < 0 or data.impressions < 0 or data.clicks < 0 or data.orders < 0:
         return {"error": "Metrics cannot be negative numbers."}
 
+    if data.spend == 0 and (data.impressions > 0 or data.clicks > 0 or data.orders > 0):
+        return {"error": "If Spend is 0, Impressions, Clicks, and Orders must also be 0."}
+
+    if data.spend > 0 and data.impressions == 0:
+        return {"error": "Spend cannot be greater than 0 if Impressions is 0."}
+
     if data.clicks > data.impressions:
         return {"error": "Clicks cannot be greater than Impressions."}
 
